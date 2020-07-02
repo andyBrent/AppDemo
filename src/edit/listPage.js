@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {
   DeviceEventEmitter,
-  Alert,
   TouchableOpacity,
   ImageBackground,
   SafeAreaView,
@@ -11,15 +10,17 @@ import {
   StatusBar,
 } from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import Todo from './Todo';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {Todo, TodoEdit} from './Todo';
 
 export default class ListPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       text: '',
+      editing: false,
+      changes: [],
     };
+    this.keepChanges = this.keepChanges.bind(this);
   }
   componentDidMount() {
     this.listener = DeviceEventEmitter.addListener('newItem', message => {
@@ -31,9 +32,18 @@ export default class ListPage extends Component {
       this.listener.remove();
     }
   }
+  keepChanges(id, newItem) {
+    let dic = {};
+    dic.id = id;
+    dic.newItem = newItem;
+    // let new_change = this.state.text;
+    // new_change.push(dic);
+    this.setState({changes: [...this.state.changes, dic]});
+  }
 
   render() {
-    console.log(`listPage${JSON.stringify(this.props)}`);
+    console.log(`listPage Props${JSON.stringify(this.props)}`);
+    console.log(`listPage States${JSON.stringify(this.state)}`);
     return (
       <>
         <StatusBar barStyle="dark-content" />
@@ -53,9 +63,12 @@ export default class ListPage extends Component {
               <View style={styles.sectionContainer}>
                 <View style={styles.newItem}>
                   {this.props.todoItem.length === 0 && (
-                    <Text>No todos yet...</Text>
+                    <Text style={styles.sectionDescription}>
+                      No todos yet...
+                    </Text>
                   )}
                   {this.props.todoItem.length !== 0 &&
+                    !this.state.editing &&
                     this.props.todoItem.map(todos => (
                       <Todo
                         key={todos.id}
@@ -65,22 +78,48 @@ export default class ListPage extends Component {
                         toggle={this.props.toggleTodo}
                       />
                     ))}
+                  {this.props.todoItem.length !== 0 &&
+                    this.state.editing &&
+                    this.props.todoItem.map(todos => (
+                      <TodoEdit
+                        key={todos.id}
+                        id={todos.id}
+                        completed={todos.completed}
+                        text={todos.item}
+                        toggle={this.props.toggleTodo}
+                        delete_id={this.props.deleteTodo}
+                        keepChanges={this.keepChanges}
+                      />
+                    ))}
                 </View>
-                <View style={styles.submitItem}>
-                  <ImageBackground
-                    accessibilityRole={'image'}
-                    source={require('../static/images/001.jpg')}
-                    style={styles.imageBackgroundButton}>
-                    <TouchableOpacity
-                      accessibilityRole={'button'}
-                      // onPress={() => {
-                      //   this.props.toggleTodo(2);
-                      // }}
-                    >
-                      <Text style={styles.buttonText}>Edit</Text>
-                    </TouchableOpacity>
-                  </ImageBackground>
-                </View>
+                {this.props.todoItem.length !== 0 && (
+                  <View style={styles.submitItem}>
+                    <ImageBackground
+                      accessibilityRole={'image'}
+                      source={require('../static/images/001.jpg')}
+                      style={styles.imageBackgroundButton}>
+                      {!this.state.editing && (
+                        <TouchableOpacity
+                          accessibilityRole={'button'}
+                          onPress={() => {
+                            this.setState({editing: true});
+                          }}>
+                          <Text style={styles.buttonText}>Edit</Text>
+                        </TouchableOpacity>
+                      )}
+                      {this.state.editing && (
+                        <TouchableOpacity
+                          accessibilityRole={'button'}
+                          onPress={() => {
+                            this.setState({editing: false});
+                            this.props.updateTodo(this.state.changes);
+                          }}>
+                          <Text style={styles.buttonText}>Finish</Text>
+                        </TouchableOpacity>
+                      )}
+                    </ImageBackground>
+                  </View>
+                )}
               </View>
             </View>
           </ImageBackground>
@@ -101,6 +140,13 @@ const styles = StyleSheet.create({
   },
   sectionContainer: {
     paddingHorizontal: 10,
+  },
+  sectionDescription: {
+    marginVertical: 8,
+    fontSize: 20,
+    fontWeight: '300',
+    color: Colors.dark,
+    textAlign: 'center',
   },
   imageBackgroundButton: {
     paddingTop: 10,

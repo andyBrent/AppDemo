@@ -12,7 +12,6 @@ import {
   StatusBar,
 } from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 export default class EditPage extends Component {
   constructor(props) {
@@ -75,6 +74,10 @@ export default class EditPage extends Component {
                     <TouchableOpacity
                       accessibilityRole={'button'}
                       onPress={() => {
+                        if (this.state.text === '') {
+                          Alert.alert('Do not new an empty item.');
+                          return;
+                        }
                         this.startEmit();
                         this.props.newTodo(this.state.text);
                         this.setState({text: ''});

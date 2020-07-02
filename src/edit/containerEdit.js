@@ -13,7 +13,6 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     newTodo(text) {
-      console.log('ahhhhhh32')
       dispatch(addTodo(text));
     },
   };
