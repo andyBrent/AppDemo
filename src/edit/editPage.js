@@ -18,12 +18,9 @@ export default class EditPage extends Component {
     super(props);
     this.state = {
       text: '',
+      message: '',
     };
   }
-  startEmit = () => {
-    const message = '新增了todoItem';
-    DeviceEventEmitter.emit('newItem', message);
-  };
   createTwoButtonAlert = () =>
     Alert.alert(
       'New successfully!',
@@ -31,7 +28,16 @@ export default class EditPage extends Component {
       [{text: 'OK', onPress: () => console.log('OK Pressed')}],
       {cancelable: false},
     );
-
+  componentDidMount() {
+    this.listener = DeviceEventEmitter.addListener('deleteItem', message => {
+      this.setState({message});
+    });
+  }
+  componentWillUnmount() {
+    if (this.listener) {
+      this.listener.remove();
+    }
+  }
   render() {
     console.log(`editPage${JSON.stringify(this.props)}`);
     return (
@@ -78,10 +84,10 @@ export default class EditPage extends Component {
                           Alert.alert('Do not new an empty item.');
                           return;
                         }
-                        this.startEmit();
                         this.props.newTodo(this.state.text);
                         this.setState({text: ''});
                         this.createTwoButtonAlert();
+                        DeviceEventEmitter.emit('newItem', '新增了todoItem');
                       }}>
                       <Text style={styles.buttonText}>New</Text>
                     </TouchableOpacity>

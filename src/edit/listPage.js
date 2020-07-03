@@ -10,7 +10,8 @@ import {
   StatusBar,
 } from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {Todo, TodoEdit} from './Todo';
+import {Todo} from './Todo';
+import {TodoEdit} from './TodoEdit';
 
 export default class ListPage extends Component {
   constructor(props) {
@@ -24,6 +25,9 @@ export default class ListPage extends Component {
   }
   componentDidMount() {
     this.listener = DeviceEventEmitter.addListener('newItem', message => {
+      this.setState({message, editing: false});
+    });
+    this.listener = DeviceEventEmitter.addListener('deleteItem', message => {
       this.setState({message});
     });
   }
@@ -85,7 +89,7 @@ export default class ListPage extends Component {
                         key={todos.id}
                         id={todos.id}
                         completed={todos.completed}
-                        text={todos.item}
+                        item={todos.item}
                         toggle={this.props.toggleTodo}
                         delete_id={this.props.deleteTodo}
                         keepChanges={this.keepChanges}
@@ -93,31 +97,49 @@ export default class ListPage extends Component {
                     ))}
                 </View>
                 {this.props.todoItem.length !== 0 && (
-                  <View style={styles.submitItem}>
-                    <ImageBackground
-                      accessibilityRole={'image'}
-                      source={require('../static/images/001.jpg')}
-                      style={styles.imageBackgroundButton}>
-                      {!this.state.editing && (
-                        <TouchableOpacity
-                          accessibilityRole={'button'}
-                          onPress={() => {
-                            this.setState({editing: true});
-                          }}>
-                          <Text style={styles.buttonText}>Edit</Text>
-                        </TouchableOpacity>
-                      )}
-                      {this.state.editing && (
-                        <TouchableOpacity
-                          accessibilityRole={'button'}
-                          onPress={() => {
-                            this.setState({editing: false});
-                            this.props.updateTodo(this.state.changes);
-                          }}>
-                          <Text style={styles.buttonText}>Finish</Text>
-                        </TouchableOpacity>
-                      )}
-                    </ImageBackground>
+                  <View style={styles.submitContainer}>
+                    <View style={styles.submitItem}>
+                      <ImageBackground
+                        accessibilityRole={'image'}
+                        source={require('../static/images/001.jpg')}
+                        style={styles.imageBackgroundButton}>
+                        {!this.state.editing && (
+                          <TouchableOpacity
+                            accessibilityRole={'button'}
+                            onPress={() => {
+                              this.setState({editing: true});
+                            }}>
+                            <Text style={styles.buttonText}>Edit</Text>
+                          </TouchableOpacity>
+                        )}
+                        {this.state.editing && (
+                          <TouchableOpacity
+                            accessibilityRole={'button'}
+                            onPress={() => {
+                              this.props.updateTodo(this.state.changes);
+                              this.setState({editing: false, changes: []});
+                            }}>
+                            <Text style={styles.buttonText}>Finish</Text>
+                          </TouchableOpacity>
+                        )}
+                      </ImageBackground>
+                    </View>
+                    {this.state.editing && (
+                      <View style={styles.submitItem}>
+                        <ImageBackground
+                          accessibilityRole={'image'}
+                          source={require('../static/images/001.jpg')}
+                          style={styles.imageBackgroundButton}>
+                          <TouchableOpacity
+                            accessibilityRole={'button'}
+                            onPress={() => {
+                              this.setState({editing: false, changes: []});
+                            }}>
+                            <Text style={styles.buttonText}>Cancel</Text>
+                          </TouchableOpacity>
+                        </ImageBackground>
+                      </View>
+                    )}
                   </View>
                 )}
               </View>
@@ -191,7 +213,10 @@ const styles = StyleSheet.create({
     // paddingHorizontal: 24,
   },
   submitItem: {
-    marginBottom: 30,
+    marginBottom: 10,
+  },
+  submitContainer: {
+    marginBottom: 20,
   },
   thirdTitle: {
     paddingVertical: 10,

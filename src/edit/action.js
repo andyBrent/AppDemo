@@ -1,7 +1,5 @@
 import * as actionTypes from './actionTypes';
 
-let nextTodoId = 0;
-
 export function addTodo(text) {
   return function(dispatch) {
     let item = text;

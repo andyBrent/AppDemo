@@ -18,12 +18,20 @@ const todoItem = (state = [], action) => {
           state.splice(index, 1);
         }
       });
-      return state.map(todo =>
-        todo.id > action.delete_id ? {...todo, id: todo.id - 1} : todo,
-      );
+      return state;
     case actionTypes.UPDATE_TODO:
-      for (var j = 0; j < action.changeList.length; j++) {
-        state[action.changeList[j].id].item = action.changeList[j].newItem;
+      for (let i = 0; i < action.changeList.length; i++) {
+        let change = action.changeList[i];
+        for (let j = 0; j < state.length; j++) {
+          let todo = state[j];
+          if (todo.id === change.id) {
+            todo.item = change.newItem;
+            break;
+          }
+        }
+      }
+      for (let j = 0; j < state.length; j++) {
+        state[j].id = j;
       }
       return state;
     default:
