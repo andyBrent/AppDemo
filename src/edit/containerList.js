@@ -1,12 +1,13 @@
 import {connect} from 'react-redux';
 import ListPage from './listPage';
 import {toggleTodo, deleteTodo, updateTodo} from './action';
+import {updateDay, deleteDay} from '../day/action';
 
 function mapStateToProps(state) {
-  console.log(`222welcomeLoading mapStateToProps: ${JSON.stringify(state)}`);
-  const {todoItem} = state || {};
+  const {todoItem, memorialDay} = state || {};
   return {
     todoItem,
+    memorialDay,
   };
 }
 
@@ -20,6 +21,12 @@ function mapDispatchToProps(dispatch) {
     },
     updateTodo(changeList) {
       dispatch(updateTodo(changeList));
+    },
+    updateDay(changeList) {
+      dispatch(updateDay(changeList));
+    },
+    deleteDay(id) {
+      dispatch(deleteDay(id));
     },
   };
 }

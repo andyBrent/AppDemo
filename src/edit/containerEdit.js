@@ -3,7 +3,6 @@ import EditPage from './editPage';
 import {addTodo} from './action';
 
 function mapStateToProps(state) {
-  console.log(`welcomeLoading mapStateToProps: ${JSON.stringify(state)}`);
   const {todoItem} = state || {};
   return {
     todoItem,
@@ -12,8 +11,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    newTodo(text) {
-      dispatch(addTodo(text));
+    newTodo(text, tag) {
+      dispatch(addTodo(text, tag));
     },
   };
 }

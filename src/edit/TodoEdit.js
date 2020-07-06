@@ -8,19 +8,21 @@ export class TodoEdit extends Component {
     super(props);
     this.state = {
       item: this.props.item,
+      tag: this.props.tag,
       message: '',
     };
   }
 
-//   UNSAFE_componentWillReceiveProps(nextProps) {
-//     this.setState({
-//       item: nextProps.item,
-//     });
-//   }
-
   render() {
     console.log(`Todo States${JSON.stringify(this.state)}`);
-    const {id, completed, toggle, delete_id, keepChanges} = this.props;
+    const {
+      id,
+      completed,
+      toggle,
+      delete_id,
+      keepTodoItemChanges,
+      keepTodoCategroyChanges,
+    } = this.props;
     return (
       <View style={styles.container}>
         <TouchableOpacity
@@ -39,7 +41,7 @@ export class TodoEdit extends Component {
             style={styles.textInputStyle}
             value={this.state.item}
             onChangeText={new_text => this.setState({item: new_text})}
-            onSubmitEditing={() => keepChanges(id, this.state.item)}
+            onSubmitEditing={() => keepTodoItemChanges(id, this.state.item)}
           />
         </TouchableOpacity>
         <TouchableOpacity
@@ -47,7 +49,31 @@ export class TodoEdit extends Component {
             delete_id(id);
             DeviceEventEmitter.emit('deleteItem', '删除了todoItem');
           }}>
-          <FontAwesome name={'trash-o'} size={20} style={styles.trash} />
+          <FontAwesome name={'trash-o'} size={21} style={styles.trash} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            this.state.tag === 'work'
+              ? this.setState({tag: 'life'}, () =>
+                  keepTodoCategroyChanges(id, this.state.tag),
+                )
+              : this.state.tag === 'life'
+              ? this.setState({tag: 'other'}, () =>
+                  keepTodoCategroyChanges(id, this.state.tag),
+                )
+              : this.setState({tag: 'work'}, () =>
+                  keepTodoCategroyChanges(id, this.state.tag),
+                );
+          }}>
+          <Text style={styles.categroy_edit}>
+            {this.state.tag === 'life' ? (
+              <FontAwesome name={'coffee'} size={21} color={'#e91e63'} />
+            ) : this.state.tag === 'work' ? (
+              <FontAwesome name={'briefcase'} size={21} color={'#e91e63'} />
+            ) : (
+              <FontAwesome name={'tasks'} size={21} color={'#e91e63'} />
+            )}{' '}
+          </Text>
         </TouchableOpacity>
       </View>
     );
@@ -62,10 +88,15 @@ const styles = StyleSheet.create({
     fontSize: 17,
     marginVertical: 2,
     paddingBottom: 5,
-    width: 310,
+    width: 280,
+  },
+  categroy_edit: {
+    marginVertical: 5,
+    marginLeft: 5,
   },
   trash: {
     marginVertical: 4,
+    marginHorizontal: 5,
   },
   textInputStyle: {
     marginBottom: 16,

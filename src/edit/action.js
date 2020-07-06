@@ -1,6 +1,6 @@
 import * as actionTypes from './actionTypes';
 
-export function addTodo(text) {
+export function addTodo(text, tag) {
   return function(dispatch) {
     let item = text;
     let completed = false;
@@ -9,6 +9,7 @@ export function addTodo(text) {
       todoItem: {
         item,
         completed,
+        tag,
       },
     });
   };

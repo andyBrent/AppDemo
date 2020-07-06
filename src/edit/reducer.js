@@ -25,7 +25,12 @@ const todoItem = (state = [], action) => {
         for (let j = 0; j < state.length; j++) {
           let todo = state[j];
           if (todo.id === change.id) {
-            todo.item = change.newItem;
+            if (change.hasOwnProperty('newItem')) {
+              todo.item = change.newItem;
+            }
+            if (change.hasOwnProperty('newCategroy')) {
+              todo.tag = change.newCategroy;
+            }
             break;
           }
         }

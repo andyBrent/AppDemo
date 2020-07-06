@@ -12,14 +12,14 @@ import RegisterPage from './login/registerPage';
 import WelcomePage from './login/welcomePage';
 import editPage from './edit/containerEdit';
 import listPage from './edit/containerList';
-import userPage from './main/userPage';
+import dayPage from './day/containerDay';
 
 const AppBottomNavigator = createBottomTabNavigator(
   {
     list: {
       screen: listPage,
       navigationOptions: {
-        tabBarLabel: 'List',
+        tabBarLabel: 'Main Page',
         tabBarIcon: ({focused, tintColor}) => {
           <FontAwesome
             name={focused ? 'check' : 'check'}
@@ -32,7 +32,7 @@ const AppBottomNavigator = createBottomTabNavigator(
     edit: {
       screen: editPage,
       navigationOptions: {
-        tabBarLabel: 'Edit',
+        tabBarLabel: 'New Todo',
         tabBarIcon: ({focused, tintColor}) => {
           <FontAwesome
             name={focused ? 'check' : 'check'}
@@ -42,10 +42,10 @@ const AppBottomNavigator = createBottomTabNavigator(
         },
       },
     },
-    user: {
-      screen: userPage,
+    day: {
+      screen: dayPage,
       navigationOptions: {
-        tabBarLabel: 'User',
+        tabBarLabel: 'New Date',
         tabBarIcon: ({focused, tintColor}) => {
           <FontAwesome
             name={focused ? 'check' : 'check'}
@@ -79,15 +79,6 @@ const RootStack = createStackNavigator(
     Register: {
       screen: RegisterPage,
     },
-    // list: {
-    //   screen: listPage,
-    // },
-    // edit: {
-    //   screen: editPage,
-    // },
-    // user: {
-    //   screen: userPage,
-    // },
     bottomNavigator: {
       screen: AppBottomNavigator,
       navigationOptions: {

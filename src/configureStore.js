@@ -3,10 +3,11 @@ import thunkMiddleware from 'redux-thunk';
 import loggerMiddleware from '../src/common/middleware/logger';
 
 import todoItem from './edit/reducer';
+import memorialDay from './day/reducer';
 
 const rootReducer = combineReducers({
   todoItem,
-  // listReducer,
+  memorialDay,
 });
 
 const middlewareEnhancer = applyMiddleware(loggerMiddleware, thunkMiddleware);
