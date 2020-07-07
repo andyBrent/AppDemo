@@ -82,7 +82,11 @@ const RootStack = createStackNavigator(
     bottomNavigator: {
       screen: AppBottomNavigator,
       navigationOptions: {
-        headerShown: false,
+        // title: 'Remo',
+        headerTitle: 'Remo',
+        // headerShown: false,
+        headerTitleStyle: {fontSize: 22},
+        headerStyle: {height: 100},
       },
     },
   },

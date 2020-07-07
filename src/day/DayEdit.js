@@ -1,9 +1,5 @@
 import React, {Component} from 'react';
-import {
-  DeviceEventEmitter,
-  TextInput,
-  KeyboardAvoidingView,
-} from 'react-native';
+import {DeviceEventEmitter, TextInput} from 'react-native';
 import {TouchableOpacity, StyleSheet, Text, View} from 'react-native';
 import {DatePicker} from 'react-native-common-date-picker';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -85,7 +81,8 @@ export class DayEdit extends Component {
               );
             }}
             cancel={() => this.setState({editTime: false})}
-            maxDate="2099-12-31"
+            minDate="1950-1-1"
+            maxDate="2049-12-31"
             defaultDate={this.state.time}
           />
         )}

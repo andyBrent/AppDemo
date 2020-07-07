@@ -21,6 +21,7 @@ export default class ListPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      scrollable: true,
       text: '',
       editingTodo: false,
       editingDay: false,
@@ -33,25 +34,33 @@ export default class ListPage extends Component {
     this.keepDayThingOrTimeChanges = this.keepDayThingOrTimeChanges.bind(this);
   }
   componentDidMount() {
-    this.listener = DeviceEventEmitter.addListener('newItem', message => {
-      this.setState({message, editingTodo: false});
-    });
-    this.listener = DeviceEventEmitter.addListener('deleteItem', message => {
-      this.setState({message});
-    });
-    this.listener = DeviceEventEmitter.addListener('newDay', message => {
+    this.newItemListener = DeviceEventEmitter.addListener(
+      'newItem',
+      message => {
+        this.setState({message, editingTodo: false});
+      },
+    );
+    this.deleteItemListener = DeviceEventEmitter.addListener(
+      'deleteItem',
+      message => {
+        this.setState({message});
+      },
+    );
+    this.newDayListener = DeviceEventEmitter.addListener('newDay', message => {
       this.setState({message, editingDay: false});
     });
-    this.listener = DeviceEventEmitter.addListener('deleteDay', message => {
-      this.setState({message});
-    });
+    this.deleteDayListener = DeviceEventEmitter.addListener(
+      'deleteDay',
+      message => {
+        this.setState({message});
+      },
+    );
   }
   componentWillUnmount() {
-    if (this.listener) {
-      this.listener.remove();
-      this.listener.remove();
-      this.listener.remove();
-    }
+    this.newItemListener.remove();
+    this.deleteItemListener.remove();
+    this.newDayListener.remove();
+    this.deleteDayListener.remove();
   }
   keepTodoItemChanges(id, newItem) {
     let dic = {};
@@ -81,201 +90,205 @@ export default class ListPage extends Component {
   }
 
   render() {
-    console.log(`listPage Props${JSON.stringify(this.props)}`);
-    console.log(`listPage States${JSON.stringify(this.state)}`);
     return (
       <>
         <StatusBar barStyle="dark-content" />
-        <ScrollView>
+        <ScrollView scrollEnabled={false}>
           <SafeAreaView>
-            <ImageBackground
-              accessibilityRole={'image'}
-              source={require('../static/images/colorful_bg.jpg')}
-              style={styles.iamgeBackground}
-              imageStyle={styles.logo}>
-              <Text style={styles.text}>Your Todo List</Text>
-              <View style={styles.body}>
-                <View style={styles.sectionContainer}>
-                  <View style={styles.newItem}>
-                    {this.props.todoItem.length === 0 && (
-                      <Text style={styles.sectionDescription}>
-                        No todos yet...
-                      </Text>
-                    )}
-                    {this.props.todoItem.length !== 0 &&
-                      !this.state.editingTodo &&
-                      this.props.todoItem.map(todos => (
-                        <Todo
-                          key={todos.id}
-                          id={todos.id}
-                          completed={todos.completed}
-                          text={todos.item}
-                          tag={todos.tag}
-                          toggle={this.props.toggleTodo}
-                        />
-                      ))}
-                    {this.props.todoItem.length !== 0 &&
-                      this.state.editingTodo &&
-                      this.props.todoItem.map(todos => (
-                        <TodoEdit
-                          key={todos.id}
-                          id={todos.id}
-                          completed={todos.completed}
-                          item={todos.item}
-                          tag={todos.tag}
-                          toggle={this.props.toggleTodo}
-                          delete_id={this.props.deleteTodo}
-                          keepTodoItemChanges={this.keepTodoItemChanges}
-                          keepTodoCategroyChanges={this.keepTodoCategroyChanges}
-                        />
-                      ))}
-                  </View>
-                  {this.props.todoItem.length !== 0 && (
-                    <View style={styles.submitContainer}>
-                      <View style={styles.submitItem}>
-                        <ImageBackground
-                          accessibilityRole={'image'}
-                          source={require('../static/images/001.jpg')}
-                          style={styles.imageBackgroundButton}>
-                          {!this.state.editingTodo && (
-                            <TouchableOpacity
-                              accessibilityRole={'button'}
-                              onPress={() => {
-                                this.setState({editingTodo: true});
-                              }}>
-                              <Text style={styles.buttonText}>Edit</Text>
-                            </TouchableOpacity>
-                          )}
-                          {this.state.editingTodo && (
-                            <TouchableOpacity
-                              accessibilityRole={'button'}
-                              onPress={() => {
-                                this.props.updateTodo(this.state.changesTodo);
-                                this.setState({
-                                  editingTodo: false,
-                                  changesTodo: [],
-                                });
-                              }}>
-                              <Text style={styles.buttonText}>Finish</Text>
-                            </TouchableOpacity>
-                          )}
-                        </ImageBackground>
-                      </View>
-                      {this.state.editingTodo && (
+            <KeyboardAvoidingView
+              behavior="position"
+              keyboardVerticalOffset={20}>
+              <ImageBackground
+                accessibilityRole={'image'}
+                source={require('../static/images/colorful_bg.jpg')}
+                style={styles.iamgeBackground}
+                imageStyle={styles.logo}>
+                <Text style={styles.text}>Your Todo List</Text>
+                <View style={styles.body}>
+                  <View style={styles.sectionContainer}>
+                    <View style={styles.newItem}>
+                      {this.props.todoItem.length === 0 && (
+                        <Text style={styles.sectionDescription}>
+                          No todos yet...
+                        </Text>
+                      )}
+                      {this.props.todoItem.length !== 0 &&
+                        !this.state.editingTodo &&
+                        this.props.todoItem.map(todos => (
+                          <Todo
+                            key={todos.id}
+                            id={todos.id}
+                            completed={todos.completed}
+                            text={todos.item}
+                            tag={todos.tag}
+                            toggle={this.props.toggleTodo}
+                          />
+                        ))}
+                      {this.props.todoItem.length !== 0 &&
+                        this.state.editingTodo &&
+                        this.props.todoItem.map(todos => (
+                          <TodoEdit
+                            key={todos.id}
+                            id={todos.id}
+                            completed={todos.completed}
+                            item={todos.item}
+                            tag={todos.tag}
+                            toggle={this.props.toggleTodo}
+                            delete_id={this.props.deleteTodo}
+                            keepTodoItemChanges={this.keepTodoItemChanges}
+                            keepTodoCategroyChanges={
+                              this.keepTodoCategroyChanges
+                            }
+                          />
+                        ))}
+                    </View>
+                    {this.props.todoItem.length !== 0 && (
+                      <View style={styles.submitContainer}>
                         <View style={styles.submitItem}>
                           <ImageBackground
                             accessibilityRole={'image'}
                             source={require('../static/images/001.jpg')}
                             style={styles.imageBackgroundButton}>
-                            <TouchableOpacity
-                              accessibilityRole={'button'}
-                              onPress={() => {
-                                this.setState({
-                                  editingTodo: false,
-                                  changesTodo: [],
-                                });
-                              }}>
-                              <Text style={styles.buttonText}>Cancel</Text>
-                            </TouchableOpacity>
+                            {!this.state.editingTodo && (
+                              <TouchableOpacity
+                                accessibilityRole={'button'}
+                                onPress={() => {
+                                  this.setState({editingTodo: true});
+                                }}>
+                                <Text style={styles.buttonText}>Edit</Text>
+                              </TouchableOpacity>
+                            )}
+                            {this.state.editingTodo && (
+                              <TouchableOpacity
+                                accessibilityRole={'button'}
+                                onPress={() => {
+                                  this.props.updateTodo(this.state.changesTodo);
+                                  this.setState({
+                                    editingTodo: false,
+                                    changesTodo: [],
+                                  });
+                                }}>
+                                <Text style={styles.buttonText}>Finish</Text>
+                              </TouchableOpacity>
+                            )}
                           </ImageBackground>
                         </View>
-                      )}
-                    </View>
-                  )}
-                </View>
-              </View>
-              <Text style={styles.text}>Your Days</Text>
-              <View style={styles.body}>
-                <View style={styles.sectionContainer}>
-                  <View style={styles.newItem}>
-                    {this.props.memorialDay.length === 0 && (
-                      <Text style={styles.sectionDescription}>
-                        No memorial days yet...
-                      </Text>
-                    )}
-                    {this.props.memorialDay.length !== 0 &&
-                      !this.state.editingDay &&
-                      this.props.memorialDay.map(day => (
-                        <Day
-                          key={day.id}
-                          id={day.id}
-                          thing={day.thing}
-                          time={day.time}
-                          tag={day.tag}
-                        />
-                      ))}
-                    {this.props.memorialDay.length !== 0 &&
-                      this.state.editingDay &&
-                      this.props.memorialDay.map(day => (
-                        <DayEdit
-                          key={day.id}
-                          id={day.id}
-                          thing={day.thing}
-                          time={day.time}
-                          tag={day.tag}
-                          delete_id={this.props.deleteDay}
-                          keepDayCategroyChanges={this.keepDayCategroyChanges}
-                          keepDayThingOrTimeChanges={
-                            this.keepDayThingOrTimeChanges
-                          }
-                        />
-                      ))}
-                  </View>
-                  {this.props.memorialDay.length !== 0 && (
-                    <View style={styles.submitContainer}>
-                      <View style={styles.submitItem}>
-                        <ImageBackground
-                          accessibilityRole={'image'}
-                          source={require('../static/images/001.jpg')}
-                          style={styles.imageBackgroundButton}>
-                          {!this.state.editingDay && (
-                            <TouchableOpacity
-                              accessibilityRole={'button'}
-                              onPress={() => {
-                                this.setState({editingDay: true});
-                              }}>
-                              <Text style={styles.buttonText}>Edit</Text>
-                            </TouchableOpacity>
-                          )}
-                          {this.state.editingDay && (
-                            <TouchableOpacity
-                              accessibilityRole={'button'}
-                              onPress={() => {
-                                this.props.updateDay(this.state.changesDay);
-                                this.setState({
-                                  editingDay: false,
-                                  changesDay: [],
-                                });
-                              }}>
-                              <Text style={styles.buttonText}>Finish</Text>
-                            </TouchableOpacity>
-                          )}
-                        </ImageBackground>
+                        {this.state.editingTodo && (
+                          <View style={styles.submitItem}>
+                            <ImageBackground
+                              accessibilityRole={'image'}
+                              source={require('../static/images/001.jpg')}
+                              style={styles.imageBackgroundButton}>
+                              <TouchableOpacity
+                                accessibilityRole={'button'}
+                                onPress={() => {
+                                  this.setState({
+                                    editingTodo: false,
+                                    changesTodo: [],
+                                  });
+                                }}>
+                                <Text style={styles.buttonText}>Cancel</Text>
+                              </TouchableOpacity>
+                            </ImageBackground>
+                          </View>
+                        )}
                       </View>
-                      {this.state.editingDay && (
+                    )}
+                  </View>
+                </View>
+                <Text style={styles.text}>Your Days</Text>
+                <View style={styles.body}>
+                  <View style={styles.sectionContainer}>
+                    <View style={styles.newItem}>
+                      {this.props.memorialDay.length === 0 && (
+                        <Text style={styles.sectionDescription}>
+                          No memorial days yet...
+                        </Text>
+                      )}
+                      {this.props.memorialDay.length !== 0 &&
+                        !this.state.editingDay &&
+                        this.props.memorialDay.map(day => (
+                          <Day
+                            key={day.id}
+                            id={day.id}
+                            thing={day.thing}
+                            time={day.time}
+                            tag={day.tag}
+                          />
+                        ))}
+                      {this.props.memorialDay.length !== 0 &&
+                        this.state.editingDay &&
+                        this.props.memorialDay.map(day => (
+                          <DayEdit
+                            key={day.id}
+                            id={day.id}
+                            thing={day.thing}
+                            time={day.time}
+                            tag={day.tag}
+                            delete_id={this.props.deleteDay}
+                            keepDayCategroyChanges={this.keepDayCategroyChanges}
+                            keepDayThingOrTimeChanges={
+                              this.keepDayThingOrTimeChanges
+                            }
+                          />
+                        ))}
+                    </View>
+                    {this.props.memorialDay.length !== 0 && (
+                      <View style={styles.submitContainer}>
                         <View style={styles.submitItem}>
                           <ImageBackground
                             accessibilityRole={'image'}
                             source={require('../static/images/001.jpg')}
                             style={styles.imageBackgroundButton}>
-                            <TouchableOpacity
-                              accessibilityRole={'button'}
-                              onPress={() => {
-                                this.setState({
-                                  editingDay: false,
-                                  changesDay: [],
-                                });
-                              }}>
-                              <Text style={styles.buttonText}>Cancel</Text>
-                            </TouchableOpacity>
+                            {!this.state.editingDay && (
+                              <TouchableOpacity
+                                accessibilityRole={'button'}
+                                onPress={() => {
+                                  this.setState({editingDay: true});
+                                }}>
+                                <Text style={styles.buttonText}>Edit</Text>
+                              </TouchableOpacity>
+                            )}
+                            {this.state.editingDay && (
+                              <TouchableOpacity
+                                accessibilityRole={'button'}
+                                onPress={() => {
+                                  this.props.updateDay(this.state.changesDay);
+                                  this.setState({
+                                    editingDay: false,
+                                    changesDay: [],
+                                  });
+                                }}>
+                                <Text style={styles.buttonText}>Finish</Text>
+                              </TouchableOpacity>
+                            )}
                           </ImageBackground>
                         </View>
-                      )}
-                    </View>
-                  )}
+                        {this.state.editingDay && (
+                          <View style={styles.submitItem}>
+                            <ImageBackground
+                              accessibilityRole={'image'}
+                              source={require('../static/images/001.jpg')}
+                              style={styles.imageBackgroundButton}>
+                              <TouchableOpacity
+                                accessibilityRole={'button'}
+                                onPress={() => {
+                                  this.setState({
+                                    editingDay: false,
+                                    changesDay: [],
+                                  });
+                                }}>
+                                <Text style={styles.buttonText}>Cancel</Text>
+                              </TouchableOpacity>
+                            </ImageBackground>
+                          </View>
+                        )}
+                      </View>
+                    )}
+                  </View>
                 </View>
-              </View>
-            </ImageBackground>
+              </ImageBackground>
+            </KeyboardAvoidingView>
           </SafeAreaView>
         </ScrollView>
       </>
@@ -323,7 +336,7 @@ const styles = StyleSheet.create({
   },
   iamgeBackground: {
     paddingBottom: 70,
-    paddingTop: 100,
+    paddingTop: 50,
     paddingHorizontal: 32,
     // backgroundColor: Colors.lighter,
   },

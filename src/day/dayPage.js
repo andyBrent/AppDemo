@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {
   DeviceEventEmitter,
   Alert,
+  KeyboardAvoidingView,
   TextInput,
   TouchableOpacity,
   ImageBackground,
@@ -36,13 +37,16 @@ export default class EditPage extends Component {
       {cancelable: false},
     );
   componentDidMount() {
-    this.listener = DeviceEventEmitter.addListener('deleteDay', message => {
-      this.setState({message});
-    });
+    this.deleteDayListener = DeviceEventEmitter.addListener(
+      'deleteDay',
+      message => {
+        this.setState({message});
+      },
+    );
   }
   componentWillUnmount() {
-    if (this.listener) {
-      this.listener.remove();
+    if (this.deleteDayListener) {
+      this.deleteDayListener.remove();
     }
   }
   render() {
@@ -50,196 +54,201 @@ export default class EditPage extends Component {
       <>
         <StatusBar barStyle="dark-content" />
         <SafeAreaView>
-          <ImageBackground
-            accessibilityRole={'image'}
-            source={require('../static/images/colorful_bg.jpg')}
-            style={styles.iamgeBackground}
-            imageStyle={styles.logo}>
-            <Text style={styles.text}>New Day</Text>
-            {global.HermesInternal == null ? null : (
-              <View style={styles.engine}>
-                <Text style={styles.footer}>Engine: Hermes</Text>
-              </View>
-            )}
-            <View style={styles.body}>
-              <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>New a memorial day.</Text>
-                <Text style={styles.sectionDescription}>
-                  Add a memorial item in the following box.
-                </Text>
-                <View style={styles.newItem}>
+          <KeyboardAvoidingView behavior="position">
+            <ImageBackground
+              accessibilityRole={'image'}
+              source={require('../static/images/colorful_bg.jpg')}
+              style={styles.iamgeBackground}
+              imageStyle={styles.logo}>
+              <Text style={styles.text}>New Day</Text>
+              {global.HermesInternal == null ? null : (
+                <View style={styles.engine}>
+                  <Text style={styles.footer}>Engine: Hermes</Text>
+                </View>
+              )}
+              <View style={styles.body}>
+                <View style={styles.sectionContainer}>
+                  <Text style={styles.sectionTitle}>New a memorial day.</Text>
                   <Text style={styles.sectionDescription}>
-                    total number of days: {this.props.memorialDay.length}
+                    Add a memorial item in the following box.
                   </Text>
-                  <Text style={styles.thirdTitle}>Memorial Thing</Text>
-                  <TextInput
-                    style={styles.textInputStyle}
-                    value={this.state.memoThing}
-                    onChangeText={new_thing =>
-                      this.setState({memoThing: new_thing})
-                    }
-                  />
-                  <Text style={styles.thirdTitle}>Memorial Time</Text>
-                  {this.state.editTime && (
-                    <DatePicker
-                      confirm={date => {
-                        this.setState({date, editTime: false});
-                      }}
-                      cancel={() => this.setState({editTime: false})}
-                      maxDate="2099-12-31"
-                      defaultDate={this.state.date}
+                  <View style={styles.newItem}>
+                    <Text style={styles.sectionDescription}>
+                      total number of days: {this.props.memorialDay.length}
+                    </Text>
+                    <Text style={styles.thirdTitle}>Memorial Thing</Text>
+                    <TextInput
+                      style={styles.textInputStyle}
+                      value={this.state.memoThing}
+                      onChangeText={new_thing =>
+                        this.setState({memoThing: new_thing})
+                      }
                     />
-                  )}
-                  <TouchableOpacity
-                    accessibilityRole={'button'}
-                    onPress={() => {
-                      this.setState({editTime: true});
-                    }}>
-                    <Text style={styles.memorialText}>{this.state.date}</Text>
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.newcate}>
-                  <Text style={styles.thirdTitle}>Category:</Text>
-                  <View style={styles.categoryImage}>
-                    {this.state.life && (
-                      <ImageBackground
-                        accessibilityRole={'image'}
-                        source={require('../static/images/006.jpg')}
-                        style={styles.categoryImageBg}>
-                        <TouchableOpacity
-                          accessibilityRole={'button'}
-                          onPress={() => {
-                            this.setState({life: false});
-                          }}>
-                          <Text style={styles.categoryText}>Life</Text>
-                        </TouchableOpacity>
-                      </ImageBackground>
+                    <Text style={styles.thirdTitle}>Memorial Time</Text>
+                    {this.state.editTime && (
+                      <DatePicker
+                        confirm={date => {
+                          this.setState({date, editTime: false});
+                        }}
+                        cancel={() => this.setState({editTime: false})}
+                        maxDate="2099-12-31"
+                        defaultDate={this.state.date}
+                      />
                     )}
-                    {!this.state.life && (
-                      <ImageBackground
-                        accessibilityRole={'image'}
-                        source={require('../static/images/010.png')}
-                        style={styles.categoryImageBg}>
-                        <TouchableOpacity
-                          accessibilityRole={'button'}
-                          onPress={() => {
-                            this.setState({life: true});
-                            this.setState({work: false});
-                            this.setState({other: false});
-                          }}>
-                          <Text style={styles.categoryText}>Life</Text>
-                        </TouchableOpacity>
-                      </ImageBackground>
-                    )}
-                    {this.state.work && (
-                      <ImageBackground
-                        accessibilityRole={'image'}
-                        source={require('../static/images/006.jpg')}
-                        style={styles.categoryImageBg}>
-                        <TouchableOpacity
-                          accessibilityRole={'button'}
-                          onPress={() => {
-                            this.setState({work: false});
-                          }}>
-                          <Text style={styles.categoryText}>Work</Text>
-                        </TouchableOpacity>
-                      </ImageBackground>
-                    )}
-                    {!this.state.work && (
-                      <ImageBackground
-                        accessibilityRole={'image'}
-                        source={require('../static/images/010.png')}
-                        style={styles.categoryImageBg}>
-                        <TouchableOpacity
-                          accessibilityRole={'button'}
-                          onPress={() => {
-                            this.setState({work: true});
-                            this.setState({life: false});
-                            this.setState({other: false});
-                          }}>
-                          <Text style={styles.categoryText}>Work</Text>
-                        </TouchableOpacity>
-                      </ImageBackground>
-                    )}
-                    {this.state.other && (
-                      <ImageBackground
-                        accessibilityRole={'image'}
-                        source={require('../static/images/006.jpg')}
-                        style={styles.categoryImageBg_other}>
-                        <TouchableOpacity
-                          accessibilityRole={'button'}
-                          onPress={() => {
-                            this.setState({other: false});
-                          }}>
-                          <Text style={styles.categoryText}>Other</Text>
-                        </TouchableOpacity>
-                      </ImageBackground>
-                    )}
-                    {!this.state.other && (
-                      <ImageBackground
-                        accessibilityRole={'image'}
-                        source={require('../static/images/010.png')}
-                        style={styles.categoryImageBg_other}>
-                        <TouchableOpacity
-                          accessibilityRole={'button'}
-                          onPress={() => {
-                            this.setState({other: true});
-                            this.setState({life: false});
-                            this.setState({work: false});
-                          }}>
-                          <Text style={styles.categoryText}>Other</Text>
-                        </TouchableOpacity>
-                      </ImageBackground>
-                    )}
-                  </View>
-                </View>
-                <View style={styles.submitItem}>
-                  <ImageBackground
-                    accessibilityRole={'image'}
-                    source={require('../static/images/001.jpg')}
-                    style={styles.imageBackgroundButton}>
                     <TouchableOpacity
                       accessibilityRole={'button'}
                       onPress={() => {
-                        if (this.state.memoThing === '') {
-                          Alert.alert('Do not new an empty memorial thing.');
-                          return;
-                        }
-                        if (
-                          !this.state.life &&
-                          !this.state.work &&
-                          !this.state.other
-                        ) {
-                          Alert.alert("You haven't chosen tag yet.");
-                          return;
-                        }
-                        let tag = this.state.life
-                          ? 'life'
-                          : this.state.work
-                          ? 'work'
-                          : 'other';
-                        this.props.newDay(
-                          this.state.memoThing,
-                          this.state.date,
-                          tag,
-                        );
-                        this.setState({
-                          date: moment(new Date()).format('YYYY-MM-DD'),
-                          memoThing: '',
-                          life: false,
-                          work: false,
-                          other: false,
-                        });
-                        this.createTwoButtonAlert();
-                        DeviceEventEmitter.emit('newDay', '新增了memorialDay');
+                        this.setState({editTime: true});
                       }}>
-                      <Text style={styles.buttonText}>New</Text>
+                      <Text style={styles.memorialText}>{this.state.date}</Text>
                     </TouchableOpacity>
-                  </ImageBackground>
+                  </View>
+                  <View style={styles.newcate}>
+                    <Text style={styles.thirdTitle}>Category:</Text>
+                    <View style={styles.categoryImage}>
+                      {this.state.life && (
+                        <ImageBackground
+                          accessibilityRole={'image'}
+                          source={require('../static/images/006.jpg')}
+                          style={styles.categoryImageBg}>
+                          <TouchableOpacity
+                            accessibilityRole={'button'}
+                            onPress={() => {
+                              this.setState({life: false});
+                            }}>
+                            <Text style={styles.categoryText}>Life</Text>
+                          </TouchableOpacity>
+                        </ImageBackground>
+                      )}
+                      {!this.state.life && (
+                        <ImageBackground
+                          accessibilityRole={'image'}
+                          source={require('../static/images/010.png')}
+                          style={styles.categoryImageBg}>
+                          <TouchableOpacity
+                            accessibilityRole={'button'}
+                            onPress={() => {
+                              this.setState({life: true});
+                              this.setState({work: false});
+                              this.setState({other: false});
+                            }}>
+                            <Text style={styles.categoryText}>Life</Text>
+                          </TouchableOpacity>
+                        </ImageBackground>
+                      )}
+                      {this.state.work && (
+                        <ImageBackground
+                          accessibilityRole={'image'}
+                          source={require('../static/images/006.jpg')}
+                          style={styles.categoryImageBg}>
+                          <TouchableOpacity
+                            accessibilityRole={'button'}
+                            onPress={() => {
+                              this.setState({work: false});
+                            }}>
+                            <Text style={styles.categoryText}>Work</Text>
+                          </TouchableOpacity>
+                        </ImageBackground>
+                      )}
+                      {!this.state.work && (
+                        <ImageBackground
+                          accessibilityRole={'image'}
+                          source={require('../static/images/010.png')}
+                          style={styles.categoryImageBg}>
+                          <TouchableOpacity
+                            accessibilityRole={'button'}
+                            onPress={() => {
+                              this.setState({work: true});
+                              this.setState({life: false});
+                              this.setState({other: false});
+                            }}>
+                            <Text style={styles.categoryText}>Work</Text>
+                          </TouchableOpacity>
+                        </ImageBackground>
+                      )}
+                      {this.state.other && (
+                        <ImageBackground
+                          accessibilityRole={'image'}
+                          source={require('../static/images/006.jpg')}
+                          style={styles.categoryImageBg_other}>
+                          <TouchableOpacity
+                            accessibilityRole={'button'}
+                            onPress={() => {
+                              this.setState({other: false});
+                            }}>
+                            <Text style={styles.categoryText}>Other</Text>
+                          </TouchableOpacity>
+                        </ImageBackground>
+                      )}
+                      {!this.state.other && (
+                        <ImageBackground
+                          accessibilityRole={'image'}
+                          source={require('../static/images/010.png')}
+                          style={styles.categoryImageBg_other}>
+                          <TouchableOpacity
+                            accessibilityRole={'button'}
+                            onPress={() => {
+                              this.setState({other: true});
+                              this.setState({life: false});
+                              this.setState({work: false});
+                            }}>
+                            <Text style={styles.categoryText}>Other</Text>
+                          </TouchableOpacity>
+                        </ImageBackground>
+                      )}
+                    </View>
+                  </View>
+                  <View style={styles.submitItem}>
+                    <ImageBackground
+                      accessibilityRole={'image'}
+                      source={require('../static/images/001.jpg')}
+                      style={styles.imageBackgroundButton}>
+                      <TouchableOpacity
+                        accessibilityRole={'button'}
+                        onPress={() => {
+                          if (this.state.memoThing === '') {
+                            Alert.alert('Do not new an empty memorial thing.');
+                            return;
+                          }
+                          if (
+                            !this.state.life &&
+                            !this.state.work &&
+                            !this.state.other
+                          ) {
+                            Alert.alert("You haven't chosen tag yet.");
+                            return;
+                          }
+                          let tag = this.state.life
+                            ? 'life'
+                            : this.state.work
+                            ? 'work'
+                            : 'other';
+                          this.props.newDay(
+                            this.state.memoThing,
+                            this.state.date,
+                            tag,
+                          );
+                          this.setState({
+                            date: moment(new Date()).format('YYYY-MM-DD'),
+                            memoThing: '',
+                            life: false,
+                            work: false,
+                            other: false,
+                          });
+                          this.createTwoButtonAlert();
+                          DeviceEventEmitter.emit(
+                            'newDay',
+                            '新增了memorialDay',
+                          );
+                        }}>
+                        <Text style={styles.buttonText}>New</Text>
+                      </TouchableOpacity>
+                    </ImageBackground>
+                  </View>
                 </View>
               </View>
-            </View>
-          </ImageBackground>
+            </ImageBackground>
+          </KeyboardAvoidingView>
         </SafeAreaView>
       </>
     );
@@ -259,7 +268,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
   },
   sectionContainer: {
-    marginTop: 32,
+    marginTop: 22,
     paddingHorizontal: 18,
   },
   imageBackgroundButton: {
@@ -322,7 +331,7 @@ const styles = StyleSheet.create({
   },
   iamgeBackground: {
     paddingBottom: 70,
-    paddingTop: 100,
+    paddingTop: 50,
     paddingHorizontal: 32,
     // backgroundColor: Colors.lighter,
   },
