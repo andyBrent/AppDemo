@@ -91,7 +91,7 @@ const RootStack = createStackNavigator(
     },
   },
   {
-    initialRouteName: 'bottomNavigator',
+    initialRouteName: 'Welcome',
   },
 );
 

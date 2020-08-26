@@ -17,6 +17,16 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 export default class MainPage extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      username: '',
+      password: '',
+    };
+  }
+  submitForm(username, password) {
+    console.log(username, password);
+  }
   static navigationOptions = {
     title: 'Login',
   };
@@ -49,13 +59,19 @@ export default class MainPage extends Component {
               <Text style={styles.sectionTitle}>Login</Text>
               <View style={styles.thirdContainer}>
                 <Text style={styles.thirdTitle}>Username</Text>
-                <TextInput style={styles.textInputStyle} />
+                <TextInput
+                  style={styles.textInputStyle}
+                  onChangeText={text => this.setState({username: text})}
+                  value={this.state.username}
+                />
               </View>
               <View style={styles.thirdContainer}>
                 <Text style={styles.thirdTitle}>Password</Text>
                 <TextInput
                   style={styles.textInputStyle}
                   secureTextEntry={true}
+                  onChangeText={text => this.setState({password: text})}
+                  value={this.state.password}
                 />
               </View>
               <ImageBackground
@@ -65,8 +81,9 @@ export default class MainPage extends Component {
                 imageStyle={styles.buttonBackground}>
                 <TouchableOpacity
                   accessibilityRole={'button'}
-                  // onPress={() => navigate('Student')}
-                >
+                  onPress={() =>
+                    this.submitForm(this.state.username, this.state.password)
+                  }>
                   <Text style={styles.buttonText}>
                     <FontAwesome
                       name={'arrow-circle-o-right'}

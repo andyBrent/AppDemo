@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {
+  Alert,
   TouchableOpacity,
   TextInput,
   ImageBackground,
@@ -16,9 +17,24 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 export default class RegisterPage extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      username: '',
+      password: '',
+      re_password: '',
+    };
+  }
   static navigationOptions = {
     title: 'Register',
   };
+  submitForm(username, password, re_password) {
+    console.log(username, password, re_password);
+    if (password !== re_password) {
+      this.setState({password: '', re_password: ''});
+      Alert.alert('The Passwords Are Inconsistent ');
+    }
+  }
   render() {
     const {navigate} = this.props.navigation;
     return (
@@ -47,13 +63,19 @@ export default class RegisterPage extends Component {
               <Text style={styles.sectionTitle}>Register</Text>
               <View style={styles.thirdContainer}>
                 <Text style={styles.thirdTitle}>Username</Text>
-                <TextInput style={styles.textInputStyle} />
+                <TextInput
+                  style={styles.textInputStyle}
+                  value={this.state.username}
+                  onChangeText={text => this.setState({username: text})}
+                />
               </View>
               <View style={styles.thirdContainer}>
                 <Text style={styles.thirdTitle}>Password</Text>
                 <TextInput
                   style={styles.textInputStyle}
                   secureTextEntry={true}
+                  value={this.state.password}
+                  onChangeText={text => this.setState({password: text})}
                 />
               </View>
               <View style={styles.thirdContainer}>
@@ -61,6 +83,8 @@ export default class RegisterPage extends Component {
                 <TextInput
                   style={styles.textInputStyle}
                   secureTextEntry={true}
+                  value={this.state.re_password}
+                  onChangeText={text => this.setState({re_password: text})}
                 />
               </View>
               <ImageBackground
@@ -68,7 +92,15 @@ export default class RegisterPage extends Component {
                 source={require('../static/images/001.jpg')}
                 style={styles.imageBackgroundButton}
                 imageStyle={styles.buttonBackground}>
-                <TouchableOpacity accessibilityRole={'button'}>
+                <TouchableOpacity
+                  accessibilityRole={'button'}
+                  onPress={() =>
+                    this.submitForm(
+                      this.state.username,
+                      this.state.password,
+                      this.state.re_password,
+                    )
+                  }>
                   <Text style={styles.buttonText}>
                     <FontAwesome
                       name={'arrow-circle-o-right'}
