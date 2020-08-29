@@ -45,7 +45,6 @@ def flipper_post_install(installer)
 end
 
 target 'AppDemo' do
-  use_frameworks!
   # Pods for AppDemo
   
   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"

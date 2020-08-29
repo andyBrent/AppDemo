@@ -3,8 +3,9 @@ import AppContainer from './src/createNavigator';
 import {Provider} from 'react-redux';
 import rootReducer from './src/edit/reducer';
 import store from './src/configureStore';
+// import {withAuthenticator} from 'aws-amplify-react-native';
 
-const App: () => React$Node = () => {
+const App = () => {
   console.log(store.getState());
   return (
     <Provider store={store}>
