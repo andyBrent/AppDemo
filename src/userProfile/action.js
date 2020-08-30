@@ -1,32 +1,3 @@
-import * as actionTypes from './actionTypes';
-
-export function signIn(userDic, username) {
-  return function(dispatch) {
-    dispatch({
-      type: actionTypes.USER_SIGN_IN,
-      user: {
-        userName: username,
-        Session: userDic.Session,
-        attributes: userDic.attributes,
-        authenticationFlowType: userDic.authenticationFlowType,
-        client: userDic.client,
-        keyPrefix: userDic.keyPrefix,
-        pool: userDic.pool,
-        storage: userDic.storage,
-        userDataKey: userDic.userDataKey,
-      },
-    });
-  };
-}
-export function signOut() {
-  return function(dispatch) {
-    dispatch({
-      type: actionTypes.USER_SIGN_OUT,
-      user: {},
-    });
-  };
-}
-
 /*
 {"Session": null,
  "attributes": {"email": "17785923961@163.com", "email_verified": true, "phone_number": "+8617785923961",

@@ -29,6 +29,7 @@ export default class LoginPage extends Component {
       animating: false,
     };
     this.signIn = this.signIn.bind(this);
+    this.signOut = this.signOut.bind(this);
   }
 
   // useEffect(() => {
@@ -54,14 +55,24 @@ export default class LoginPage extends Component {
       return;
     }
     await Auth.signIn(this.state.username, this.state.password)
-      .then(userDict => this.props.userSignIn(userDict))
-      .then(() =>
-        console.log(this.props.navigation.navigate('bottomNavigator')),
-      )
+      .then(userDict => this.props.userSignIn(userDict, this.state.username))
+      .then(() => this.props.navigation.navigate('bottomNavigator'))
       .catch(error => {
         console.log('error signing in', error);
         Alert.alert(error.message);
         this.setState({password: ''});
+      })
+      .finally(() => {
+        this.setState({animating: false});
+      });
+  }
+
+  async signOut() {
+    await Auth.signOut()
+      .then(() => this.props.userSignOut())
+      .then(() => this.setState({username: '', password: ''}))
+      .catch(error => {
+        console.log('error signing out: ', error);
       })
       .finally(() => {
         this.setState({animating: false});
@@ -143,6 +154,17 @@ export default class LoginPage extends Component {
                   </TouchableOpacity>
                 </ImageBackground>
                 <View style={styles.buttonContainer}>
+                  {JSON.stringify(this.props.user) !== '{}' && (
+                    <Button
+                      onPress={() => {
+                        this.setState({animating: true});
+                        this.signOut();
+                      }}
+                      title="Sign Out"
+                      color="#841584"
+                      style={styles.button}
+                    />
+                  )}
                   <Button
                     onPress={() => navigate('Register')}
                     title="Register account"
@@ -212,7 +234,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginTop: 20,
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-around',
   },
   highlight: {
     fontWeight: '700',

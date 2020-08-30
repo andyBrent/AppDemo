@@ -5,6 +5,9 @@ const user = (state = {}, action) => {
     case actionTypes.USER_SIGN_IN:
       state = action.user;
       return state;
+    case actionTypes.USER_SIGN_OUT:
+      state = action.user;
+      return state;
     default:
       return state;
   }

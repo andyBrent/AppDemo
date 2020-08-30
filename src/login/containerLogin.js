@@ -1,6 +1,6 @@
 import {connect} from 'react-redux';
 import LoginPage from './loginPage';
-import {signIn} from './action';
+import {signIn, signOut} from './action';
 
 function mapStateToProps(state) {
   const {user} = state || null;
@@ -11,9 +11,12 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    userSignIn(userDict) {
-      console.log(userDict);
-      dispatch(signIn(userDict));
+    userSignIn(userDict, username) {
+      console.log(userDict, username);
+      dispatch(signIn(userDict, username));
+    },
+    userSignOut() {
+      dispatch(signOut());
     },
   };
 }

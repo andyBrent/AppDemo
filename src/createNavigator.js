@@ -14,17 +14,23 @@ import WelcomePage from './login/welcomePage';
 import editPage from './edit/containerEdit';
 import listPage from './edit/containerList';
 import dayPage from './day/containerDay';
+import UserProfile from './userProfile/containerUserProfile';
+import {Text, TouchableOpacity} from 'react-native';
 
-import UserProfile from './userProfile/userProfile';
+const UserImage = () => (
+  <TouchableOpacity
+    style={{marginRight: 10}}
+    onPress={() => console.log(this.props)}>
+    {/* onPress={() => this.props.navigation.toggleDrawer()}> */}
+
+    <FontAwesome name={'user-circle-o'} size={26} />
+  </TouchableOpacity>
+);
 
 const AppBottomNavigator = createBottomTabNavigator(
   {
     list: {
-      screen: createStackNavigator({
-        list: {
-          screen: listPage,
-        },
-      }),
+      screen: listPage,
       navigationOptions: {
         tabBarLabel: 'List',
         tabBarIcon: ({tintColor, focused}) => (
@@ -37,11 +43,7 @@ const AppBottomNavigator = createBottomTabNavigator(
       },
     },
     edit: {
-      screen: createStackNavigator({
-        edit: {
-          screen: editPage,
-        },
-      }),
+      screen: editPage,
       navigationOptions: {
         tabBarLabel: 'Edit',
         tabBarIcon: ({tintColor, focused}) => (
@@ -54,11 +56,7 @@ const AppBottomNavigator = createBottomTabNavigator(
       },
     },
     day: {
-      screen: createStackNavigator({
-        day: {
-          screen: dayPage,
-        },
-      }),
+      screen: dayPage,
       navigationOptions: {
         tabBarLabel: 'Day',
         tabBarIcon: ({tintColor, focused}) => (
@@ -83,48 +81,110 @@ const AppBottomNavigator = createBottomTabNavigator(
   },
 );
 
-const AppStack = createStackNavigator(
+// const AppStack = createStackNavigator(
+//   {
+//     Welcome: {
+//       screen: WelcomePage,
+//     },
+//     Login: {
+//       screen: LoginPage,
+//     },
+//     Register: {
+//       screen: RegisterPage,
+//     },
+//     bottomNavigator: {
+//       screen: AppBottomNavigator,
+//       navigationOptions: {
+//         headerBackTitle: null,
+//         // headerRight: <UserImage />,
+//         // title: 'Remo',
+//         headerTitle: 'Remo',
+//         // headerShown: false,
+//         headerTitleStyle: {fontSize: 22},
+//         headerStyle: {height: 100},
+//       },
+//     },
+//   },
+//   {
+//     initialRouteName: 'bottomNavigator',
+//   },
+// );
+
+const DrawerNavigator = createDrawerNavigator(
   {
     Welcome: {
       screen: WelcomePage,
+      navigationOptions: {
+        title: 'Welcome',
+        headerTitleStyle: {fontSize: 22},
+        headerStyle: {height: 100},
+      },
     },
     Login: {
       screen: LoginPage,
+      navigationOptions: {
+        title: 'Login',
+        headerTitleStyle: {fontSize: 22},
+        headerStyle: {height: 100},
+      },
     },
     Register: {
       screen: RegisterPage,
+      navigationOptions: {
+        title: 'Register',
+        headerTitleStyle: {fontSize: 22},
+        headerStyle: {height: 100},
+      },
     },
     bottomNavigator: {
       screen: AppBottomNavigator,
       navigationOptions: {
-        // title: 'Remo',
-        headerTitle: 'Remo',
-        // headerShown: false,
+        title: 'Remo',
+        headerTitleStyle: {fontSize: 22},
+        headerStyle: {height: 100},
+      },
+    },
+    UserProfile: {
+      screen: UserProfile,
+      navigationOptions: {
+        title: 'Home',
         headerTitleStyle: {fontSize: 22},
         headerStyle: {height: 100},
       },
     },
   },
   {
+    // order: ['Welcome', 'UserProfile', 'bottomNavigator', 'Register', 'Login'],
     initialRouteName: 'bottomNavigator',
-  },
-);
-
-const DrawerNavigator = createDrawerNavigator(
-  {
-    Homepage: {
-      screen: AppStack,
-    },
-    UserProfile: {
-      screen: UserProfile,
-    },
-  },
-  {
-    initialRouteName: 'Homepage',
-    drawerPosition: 'left', // 抽屉在左边还是右边
+    drawerPosition: 'right', // 抽屉在左边还是右边
     // contentComponent: Menu, // Menu是自定义侧滑栏
+    drawerLockMode: 'locked-open',
+    drawerWidth: 150,
   },
 );
 
-const AppContainer = createAppContainer(DrawerNavigator);
+const navigationOptionsStack = ({navigation}) => {
+  const {params} = navigation.state;
+  return {
+    headerTitle: 'Remo',
+    tabBarVisible: true,
+    headerRight: (
+      <TouchableOpacity
+        style={{marginRight: 10}}
+        // onPress={() => console.log(this.props)}>
+        onPress={() => navigation.toggleDrawer()}>
+        <FontAwesome name={'user-circle-o'} size={26} />
+      </TouchableOpacity>
+    ),
+  };
+};
+
+const AppStack = createStackNavigator({
+  HomePage: {
+    screen: DrawerNavigator,
+    navigationOptions: navigationOptionsStack,
+  },
+});
+
+const AppContainer = createAppContainer(AppStack);
 export default AppContainer;

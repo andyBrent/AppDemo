@@ -19,6 +19,8 @@ export default class UserProfile extends Component {
   };
   render() {
     const {navigate} = this.props.navigation;
+    const {user} = this.props;
+    console.log(`user:${JSON.stringify(user)}`);
     return (
       <>
         <StatusBar barStyle="dark-content" />
@@ -28,55 +30,58 @@ export default class UserProfile extends Component {
             source={require('../static/images/colorful_bg.jpg')}
             style={styles.iamgeBackground}
             imageStyle={styles.logo}>
-            <Text style={styles.text}>Welcome to Remo</Text>
+            <Text style={styles.text}>User Profile</Text>
           </ImageBackground>
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
           <View style={styles.body}>
             <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>What is Remo?</Text>
-              <Text style={styles.sectionDescription}>
-                <Text style={styles.highlight}>Remo</Text> is the abbreviation
-                for Remember memory.
-              </Text>
-              <Text style={styles.sectionDescription}>
-                Remo provides you with accurate calcualtion of time-gap bewteen
-                now and your memorable day.
+              <Text style={styles.highlight}>
+                userName:
+                <Text style={styles.sectionDescription}>
+                  {user.userName || 'Null'}
+                </Text>
               </Text>
             </View>
             <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Usage of Remo</Text>
-              <Text style={styles.sectionDescription}>
-                <FontAwesome name={'check'} size={15} /> Inform memorial days
-              </Text>
-              <Text style={styles.sectionDescription}>
-                <FontAwesome name={'check'} size={15} /> Desing your Remo Card
-              </Text>
-              <Text style={styles.sectionDescription}>
-                <FontAwesome name={'check'} size={15} /> Count down the gap
-                bewteen now and certain date
-              </Text>
-              <Text style={styles.sectionDescription}>
-                <FontAwesome name={'check'} size={15} /> Make friends and
-                appreciate their remo cards
+              <Text style={styles.highlight}>
+                email:
+                <Text style={styles.sectionDescription}>
+                  {user.attributes ? user.attributes.email || 'Null' : 'Null'}
+                </Text>
               </Text>
             </View>
             <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Ready？</Text>
-              <ImageBackground
-                accessibilityRole={'image'}
-                source={require('../static/images/001.jpg')}
-                style={styles.imageBackgroundButton}
-                imageStyle={styles.buttonBackground}>
-                <TouchableOpacity
-                  accessibilityRole={'button'}
-                  onPress={() => navigate('Login')}>
-                  <Text style={styles.buttonText}>Next Step...</Text>
-                </TouchableOpacity>
-              </ImageBackground>
+              <Text style={styles.highlight}>
+                email_verified:
+                <Text style={styles.sectionDescription}>
+                  {user.attributes
+                    ? user.attributes.email_verified
+                      ? 'True'
+                      : 'False'
+                    : 'Null'}
+                </Text>
+              </Text>
+            </View>
+            <View style={styles.sectionContainer}>
+              <Text style={styles.highlight}>
+                phone_number:
+                <Text style={styles.sectionDescription}>
+                  {user.attributes
+                    ? user.attributes.phone_number || 'Null'
+                    : 'Null'}
+                </Text>
+              </Text>
+            </View>
+            <View style={styles.sectionContainer}>
+              <Text style={styles.highlight}>
+                email_verified:
+                <Text style={styles.sectionDescription}>
+                  {user.attributes
+                    ? user.attributes.phone_number_verified
+                      ? 'True'
+                      : 'False'
+                    : 'Null'}{' '}
+                </Text>
+              </Text>
             </View>
           </View>
         </SafeAreaView>
@@ -95,10 +100,11 @@ const styles = StyleSheet.create({
   },
   body: {
     backgroundColor: Colors.white,
+    padding: 15,
   },
   sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+    // marginVertical: 1,
+    paddingHorizontal: 10,
   },
   imageBackgroundButton: {
     marginTop: 30,
@@ -139,7 +145,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   iamgeBackground: {
-    paddingBottom: 70,
+    paddingBottom: -10,
     paddingTop: 100,
     paddingHorizontal: 32,
     // backgroundColor: Colors.lighter,
@@ -155,6 +161,7 @@ const styles = StyleSheet.create({
     fontSize: 36,
     fontWeight: '500',
     textAlign: 'center',
+    marginBottom: 20,
     // color: Colors.black,
   },
 });
