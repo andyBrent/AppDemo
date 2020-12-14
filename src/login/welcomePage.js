@@ -73,7 +73,7 @@ export default class WelcomePage extends Component {
                 imageStyle={styles.buttonBackground}>
                 <TouchableOpacity
                   accessibilityRole={'button'}
-                  onPress={() => navigate('Login')}>
+                  onPress={() => navigate('Register')}>
                   <Text style={styles.buttonText}>Next Step...</Text>
                 </TouchableOpacity>
               </ImageBackground>

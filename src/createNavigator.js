@@ -15,6 +15,7 @@ import editPage from './edit/containerEdit';
 import listPage from './edit/containerList';
 import dayPage from './day/containerDay';
 import UserProfile from './userProfile/containerUserProfile';
+import MyWeb from './webbrowser/webbrowser';
 import {Text, TouchableOpacity} from 'react-native';
 
 const UserImage = () => (
@@ -152,6 +153,14 @@ const DrawerNavigator = createDrawerNavigator(
         headerStyle: {height: 100},
       },
     },
+    MyWeb: {
+      screen: MyWeb,
+      navigationOptions: {
+        title: 'MyWeb',
+        headerTitleStyle: {fontSize: 22},
+        headerStyle: {height: 100},
+      },
+    },
   },
   {
     // order: ['Welcome', 'UserProfile', 'bottomNavigator', 'Register', 'Login'],
@@ -168,7 +177,7 @@ const navigationOptionsStack = ({navigation}) => {
   return {
     headerTitle: 'Remo',
     tabBarVisible: true,
-    headerRight: (
+    headerRight: () => (
       <TouchableOpacity
         style={{marginRight: 10}}
         // onPress={() => console.log(this.props)}>
